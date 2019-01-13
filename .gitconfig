@@ -1,5 +1,5 @@
 [user]
-	name = Hubbitus
+	name = Pavel Alexeev
 	email = pahan@hubbitus.info
 
 # Colors from http://jblevins.org/log/git-colors
@@ -30,9 +30,15 @@
 	editor = mcedit
 	quotepath = false
 	compression = 9
+	autocrlf = input
+	fileMode = true
 
 [merge]
 	tool = meld
+
+# Workaround of BUG https://bugzilla.redhat.com/show_bug.cgi?id=1216120#c3
+[mergetool "meld"]
+	hasOutput = true
 
 [push]
 #?	default = simple
@@ -40,12 +46,71 @@
 
 # http://alblue.bandlem.com/2011/04/git-tip-of-week-aliases.html
 [alias]
+	a = add
+	b = branch
+	c = commit
+	# "commit and push". http://stackoverflow.com/questions/19595067/git-add-commit-and-push-commands-in-one
+	cp = "!f() { git add -A && git commit -m \"$@\" && git push; }; f"
+	ch = checkout
+	# http://stackoverflow.com/questions/5257553/coloring-white-space-in-git-diffs-output/5259137#5259137
+	d = diff --ws-error-highlight=all
+	# Meld for now (http://stackoverflow.com/questions/2006032/view-differences-of-branches-with-meld). See also meld alias
+	d-t = difftool
+	d-ignore-space-at-eol = diff --ignore-space-at-eol
+	d-ignore-spaces = diff --ignore-blank-lines --ignore-space-change
+	# http://stackoverflow.com/questions/3920650/git-diff-show-me-line-ending-changes/36604948#36604948
+	d-w = diff --word-diff-regex=.
+	d-word = diff --word-diff-regex=.
+	f = fetch
+	meld = difftool
+	ph = push
+	pl = pull
+	ps = push
+	r = remote -v
+	s = status
 	st = status
+
+
+	# http://stackoverflow.com/questions/11269256/how-to-name-and-retrieve-a-stash-by-name-in-git
+	# ssave "some meaningfull name"
+	ssave = stash save
+	sshow = "!f() { git stash show stash^{/$*}; }; f"
+	sshowdiff = "!f() { git stash show -p stash^{/$*} -p; }; f"
+	sapply = "!f() { git stash apply stash^{/$*}; }; f"
+
 	# Define 'git last' to show last commit message
 	last = show -s HEAD^{commit}
 	# http://alblue.bandlem.com/2011/05/git-tip-of-week-reflogs.html
 	undo = reset HEAD@{1}
 
+	# http://stackoverflow.com/a/24396192/307525
+	ignore = update-index --assume-unchanged
+	unignore = update-index --no-assume-unchanged
+	ignored = !git ls-files -v | grep ^[[:lower:]]
+	# http://githowto.com/ru/aliases
+	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+	type = cat-file -t
+	dump = cat-file -p
+
+	# http://stackoverflow.com/questions/1064361/unable-to-show-a-git-tree-in-terminal
+	tree = log --graph --oneline --all
+
+	# http://stackoverflow.com/questions/1527234/finding-a-branch-point-with-git
+	branchdiff = !sh -c \"git diff `git oldest-ancestor`..\"
+	branchlog = !sh -c \"git log `git oldest-ancestor`..\"
+
+	list-all-history-files = !sh -c \"git rev-list --all --objects | cut -d' ' -f 2- | sort -u\"
+
 [branch]
 	# https://www.atlassian.com/git/tutorial/remote-repositories#!pull
-	autosetuprebase = always
+#?	autosetuprebase = always
+
+[rerere]
+	enabled = true
+	autoupdate = true
+[pull]
+	rebase = false
+[difftool]
+	prompt = false
+[diff]
+	wsErrorHighlight = all

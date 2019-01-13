@@ -1,6 +1,6 @@
 Name:		Hubbitus-config
 Version:		1
-Release:		34%{?dist}
+Release:		35%{?dist}
 Summary:		Hubbitus system configuration
 Summary(ru):	Настройки системы Hubbitus
 
@@ -11,7 +11,6 @@ Source0:		.screenrc
 Source1:		.screenrc-remote
 Source2:		.toprc
 Source3:		.rpmmacros
-Source4:		authorized_keys
 Source5:		.bash_profile
 Source6:		.bashrc
 Source7:		.rsync_shared_options
@@ -23,10 +22,10 @@ Source52:		root.bashrc
 
 BuildArch:	noarch
 Requires:		Hubbitus-release
-Requires:		screen, mc, bash-completion, colorize, git, colorize, php, ferm
+Requires:		screen, mc, bash-completion, colorize, git, ferm
 Requires:		wireshark, iotop, moreutils, grin, sshfs, htop, darkstat, glances
 Requires:		strace, sysstat, dstat, psmisc, nethogs, telnet, elmon, trafshow
-Requires:		the_silver_searcher, bind-utils, ncdu, vcsh, kde-dev-scripts
+Requires:		the_silver_searcher, bind-utils, ncdu, vcsh
 Requires:		java-1.8.0-openjdk-headless, multitail, rsync, mutt
 # Request for epel7 was: https://bugzilla.redhat.com/show_bug.cgi?id=1141182
 Requires:		bmon
@@ -35,24 +34,20 @@ Requires:		atop
 # Request for epel7 https://bugzilla.redhat.com/show_bug.cgi?id=1228747
 Requires:		afuse
 Requires(pre):	/usr/sbin/useradd
-Requires(post):subversion
 
 %description
 My initially settings of new system.
 Mostly it contain Requires of useful packages and some settings.
 Also creates pasha user without password but with access by keys.
 THIS PACKAGE DOES NOT INTENDED FOR FOREIGN USE, but may be good idea to start
-customize it for you own needs. Please note INSTALLS MY PUBLIC KEYS FOR access
-to host by ssh without password (authorized_keys)! Use it on you own risk only.
+customize it for you own needs.
 
 %description -l ru
 Мои основные настройки новой системы.
 Прежде всего пакет содержит зависимости к другим пакетам, которые я считаю
 необходимыми, но также ещё некоторые настройки и скрипты.
 ПАКЕТ НЕ ПРЕДНАЗНАЧЕН ДЛЯ ВНЕШНЕГО ИСПОЛЬЗОВАНИЯ, но может стать хорошим стартом
-для создания подобного для своих нужд. Пожалуйста учтите что ИНСТАЛЛИРУЮТСЯ МОИ
-ОТКРЫТЕ КЛЮЧИ ДЛЯ БЕСПАРОЛЬНОГО ДОСТУПА К СЕРВЕРУ (authorized_keys).
-Используйте только на свой страх риск.
+для создания подобного для своих нужд.
 
 %package gui
 Group:		System Environment/Base
@@ -88,14 +83,12 @@ install -pm 644 %{SOURCE0} %{buildroot}/home/pasha/
 install -pm 644 %{SOURCE1} %{buildroot}/home/pasha/
 install -pm 644 %{SOURCE2} %{buildroot}/home/pasha/
 install -pm 644 %{SOURCE3} %{buildroot}/home/pasha/
-install -pm 600 %{SOURCE4} %{buildroot}/home/pasha/.ssh/
 install -pm 644 %{SOURCE5} %{buildroot}/home/pasha/
 install -pm 644 %{SOURCE6} %{buildroot}/home/pasha/
 install -pm 644 %{SOURCE7} %{buildroot}/home/pasha/
 install -pm 644 %{SOURCE8} %{buildroot}/home/pasha/
 
 install -pm 644 %{SOURCE8} %{buildroot}/root/
-install -pm 600 %{SOURCE4} %{buildroot}/root/.ssh/
 install -pm 644 %{SOURCE50} %{buildroot}/root/.screenrc
 install -pm 644 %{SOURCE51} %{buildroot}/root/.toprc
 install -pm 644 %{SOURCE52} %{buildroot}/root/.bashrc.hubbitus
@@ -119,7 +112,6 @@ function git_up(){
 }
 
 # Checkout ~/bin
-git_up 'https://github.com/Hubbitus/HuPHP.git' '/home/_SHARED_'
 git_up 'https://github.com/Hubbitus/shell.scripts.git' '/home/pasha/bin'
 chown pasha -R /home/pasha/bin
 git_up 'https://github.com/Hubbitus/shell.scripts.git' '/root/bin'
@@ -143,13 +135,16 @@ grep -q hubbitus /root/.bashrc || echo -e '\n[ -f /root/.bashrc.hubbitus ] && . 
 %config(noreplace) /root/.bashrc.hubbitus
 %config(noreplace) /root/bin
 %dir %attr(0700,pasha,pasha) %config(noreplace) /home/pasha/.ssh
-%attr(0600,pasha,pasha) %config(noreplace) /home/pasha/.ssh/authorized_keys
-%attr(0600,root,root) %config(noreplace) /root/.ssh/authorized_keys
 /home/_SHARED_
 
 %files gui
 
 %changelog
+* Mon Jan 14 2019 Pavel Alexeev <Pahan@Hubbitus.info> - 1-35
+- Drop authorized_keys from installation
+- Big update of others config
+- Drop php and svn with kde-dev-scripts requirements and HuPHP framework installation
+
 * Wed Jul 15 2015 Pavel Alexeev <Pahan@Hubbitus.info> - 1-34
 - Add R mutt, fix root bashrc addition
 - Update root .bashrc to handle missing mc modarin256root-defbg theme and fallback on gotar

@@ -12,5 +12,4 @@ alias dnf='LANG=en_US.utf8 dnf'
 alias bmon='bmon -o curses:gheight=20'
 
 export EDITOR=mcedit
-
 export ELMON=cmMvtanld

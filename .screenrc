@@ -1,21 +1,41 @@
 #http://www4.informatik.uni-erlangen.de/~jnweiger/screen-faq.html
 #http://taint.org/wk/RemoteLoginAutoScreen
 
+# https://bbs.archlinux.org/viewtopic.php?id=67464
+# https://wiki.archlinux.org/index.php/GNU_Screen#Use_256_colors
+#term screen-256color
+term xterm-256color
+#attrcolor b ".I"    # allow bold colors - necessary for some reason
+#terminfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'   # tell screen how to set colors. AB = background, AF=foreground
+#defbce on    # use current bg color for erased chars
+
 termcap xterm 'XT'
 terminfo xterm 'XT'
 
-termcapinfo xterm ti@:te@
-#???#termcapinfo xterm 'bc@:bs@'
+# https://wiki.archlinux.org/index.php/GNU_Screen#Use_X_scrolling_mechanism
+termcapinfo xterm* ti@:te@
+termcapinfo xterm 'bc@:bs@'
 altscreen on
+defscrollback 1000
+defutf8 on
+
+# https://wiki.archlinux.org/index.php/GNU_Screen#Fix_for_Name_column_in_windowlist_only_show_.22bash.22
+windowlist string "%4n {%t} %h%=%f"
 
 # http://aperiodic.net/screen/commands:hardstatus
 #hardstatus alwayslastline '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %d/%m %{W}%c %{g}]'
 hardstatus alwayslastline
 
+# http://aperiodic.net/screen/commands:backtick
+# Activity command - play. Unfortunately & work only for full command, not for parts
+backtick 1 0 1 bash -c 'function run(){ dtach -n $(mktemp -u /tmp/screen.backtrick.XXXXX) $@; }; run mpv --msg-level=all=no /usr/share/sounds/Oxygen-Sys-App-Error-Serious-Very.ogg ; run xcowsay --time=5 "Screen activity detected" 2>/dev/null || run xmessage -timeout 5 -nearmouse "Screen activity detected" '
+
+# http://aperiodic.net/screen/monitoring
+activity "%c activity -> %n%f %t^G %1`"
+
+#mousetrack on
+
 #http://linsovet.com/content/%D0%B7%D0%B0%D0%B9%D1%82%D0%B8-%D0%B2-screen-%D0%BD%D0%B0-%D1%83%D0%B4%D0%B0%D0%BB%D1%91%D0%BD%D0%BD%D0%BE%D0%B9-%D1%81%D0%B8%D1%81%D1%82%D0%B5%D0%BC%D0%B5#comment-2017
-#screen -t rTorrent 0 bash -c 'cd ~; ulimit -c unlimited ; rtorrent; bash'
-#screen -t rpmBuild 1 bash -c 'cd ~/SOFT/rpmbuild ; bash -c mc; bash'
-#screen -t rpmBuild2 2 bash -c 'cd ~/SOFT/rpmbuild ; bash -c mc; bash'
-#screen -t BackUPs 3 bash -c 'cd /mnt/Media/BackUPs; bash -c mc'
-#screen -t bash 4 mc
-#select 5
+screen -t LOGS 0 sh -c 'sudo journalctl -f | colorize'
+screen -t elmon 1 sh -c 'elmon; bash'
+screen -t bash 2 sh -c 'TERM=xterm-256color mc -x --skin=gotar; bash'
