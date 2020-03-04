@@ -1,6 +1,6 @@
 Name:		Hubbitus-config
 Version:		1
-Release:		35%{?dist}
+Release:		36%{?dist}
 Summary:		Hubbitus system configuration
 Summary(ru):	Настройки системы Hubbitus
 
@@ -22,9 +22,10 @@ Source52:		root.bashrc
 
 BuildArch:	noarch
 Requires:		Hubbitus-release
-Requires:		screen, mc, bash-completion, colorize, git, ferm
-Requires:		wireshark, iotop, moreutils, grin, sshfs, htop, darkstat, glances
-Requires:		strace, sysstat, dstat, psmisc, nethogs, telnet, elmon, trafshow
+Requires:		screen, mc, bash-completion, colorize, git, ferm, wireshark-cli
+Requires:		iotop, moreutils, grin, sshfs, htop, darkstat, glances
+# dstat usefull but pull also PCP dependency which may look redundant
+Requires:		strace, sysstat, psmisc, nethogs, telnet, elmon, trafshow
 Requires:		the_silver_searcher, bind-utils, ncdu, vcsh
 Requires:		java-1.8.0-openjdk-headless, multitail, rsync, mutt
 # Request for epel7 was: https://bugzilla.redhat.com/show_bug.cgi?id=1141182
@@ -34,6 +35,10 @@ Requires:		atop
 # Request for epel7 https://bugzilla.redhat.com/show_bug.cgi?id=1228747
 Requires:		afuse
 Requires(pre):	/usr/sbin/useradd
+# Really it is provided by coreutils (/usr/bin/basename).
+# But old Adobe Acrobat Rader require /bin/basename and symlink ignored
+# Instead of manually deal with dependencies (https://www.if-not-true-then-false.com/2010/install-adobe-acrobat-pdf-reader-on-fedora-centos-red-hat-rhel/) I just add it there
+Provides:		/bin/basename
 
 %description
 My initially settings of new system.
@@ -53,8 +58,8 @@ customize it for you own needs.
 Group:		System Environment/Base
 Summary:		Hubbitus system configuration
 Requires:		%{name} = %{version}-%{release}
-Requires:		firefox, thunderbird, gajim, meld, yakuake, kdeneur, terminator
-Requires:		wireshark-gnome, mplayer
+Requires:		firefox, thunderbird, gajim, meld, yakuake, gxneur, terminator
+Requires:		wireshark, mplayer
 
 %description gui
 My initially settings of new system with GUI.
@@ -66,7 +71,7 @@ customize it for own needs.
 Мои основные настройки новой системы c ГРАФИКОЙ.
 Прежде всего пакет содержит зависимости к другим пакетам, которые я считаю
 необходимыми, но также ещё некоторые настройки и скрипты.
-ПАКЕТ НЕ ПРЕДНАЗНАЧЕН ДЛЯ ВНЕШНЕГО ИСПОЛЬЗОВАНИЯ, но моет быть хорошим стартом
+ПАКЕТ НЕ ПРЕДНАЗНАЧЕН ДЛЯ ВНЕШНЕГО ИСПОЛЬЗОВАНИЯ, но может быть хорошим стартом
 для создания подобного для себя.
 
 %prep
@@ -140,6 +145,12 @@ grep -q hubbitus /root/.bashrc || echo -e '\n[ -f /root/.bashrc.hubbitus ] && . 
 %files gui
 
 %changelog
+* Wed Feb 26 2020 Pavel Alexeev <Pahan@Hubbitus.info> - 1-36
+- Add 'Provides: /bin/basename' for old Acrobat reader
+- For GUI deps replace kdeneur by gxneur
+- Dstat usefull but pull also PCP dependency which may look redundant. Excluding.
+- Replase wireshark by wareshark-cli dependency and wireshark-gnome by wareshark
+
 * Mon Jan 14 2019 Pavel Alexeev <Pahan@Hubbitus.info> - 1-35
 - Drop authorized_keys from installation
 - Big update of others config
