@@ -1,1 +1,1 @@
-fedpkg --dist f31 local
+fedpkg --dist f32 local
