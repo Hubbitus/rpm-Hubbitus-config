@@ -1,6 +1,6 @@
 Name:		Hubbitus-config
 Version:		1
-Release:		36%{?dist}
+Release:		38%{?dist}
 Summary:		Hubbitus system configuration
 Summary(ru):	Настройки системы Hubbitus
 
@@ -145,6 +145,9 @@ grep -q hubbitus /root/.bashrc || echo -e '\n[ -f /root/.bashrc.hubbitus ] && . 
 %files gui
 
 %changelog
+* Sun Nov 26 2023 Pavel Alexeev <Pahan@Hubbitus.info> - 1-38
+- Build for Fedora 38
+
 * Wed Feb 26 2020 Pavel Alexeev <Pahan@Hubbitus.info> - 1-36
 - Add 'Provides: /bin/basename' for old Acrobat reader
 - For GUI deps replace kdeneur by gxneur
